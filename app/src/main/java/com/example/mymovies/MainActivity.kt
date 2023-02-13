@@ -1,6 +1,7 @@
  package com.example.mymovies
 
 import android.os.Bundle
+import android.widget.NumberPicker.OnValueChangeListener
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -9,11 +10,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayCircleOutline
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,7 +24,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
 import com.example.mymovies.MediaItem.*
 import com.example.mymovies.ui.theme.MyMoviesTheme
@@ -35,15 +35,49 @@ class MainActivity : ComponentActivity() {
             MyMoviesTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    MediaList()
+                    val (value, onValueChange)=rememberSaveable{ mutableStateOf("")}
+                    StateSample(value = value,
+                        onValueChange =  onValueChange
+                    )
                 }
             }
         }
     }
 }
 
+
+@Composable
+fun StateSample(value: String, onValueChange:(String) -> Unit){
+    Column (
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(64.dp),
+        verticalArrangement = Arrangement.Center
+            ){
+        TextField(
+            value = value,
+            onValueChange = {onValueChange},
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+        Text(
+            text = value,
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Yellow)
+                .padding(8.dp)
+        )
+        Button(onClick = {onValueChange("")},
+        modifier = Modifier
+            .fillMaxWidth(),
+            enabled = value.isNotEmpty()
+        ) {
+            Text(text = "Clear")
+        }
+    }
+}
  @ExperimentalCoilApi
- @Preview(showBackground = true)
+ //@Preview(showBackground = true)
  @Composable
  fun MediaList() {
      LazyVerticalGrid(

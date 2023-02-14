@@ -1,6 +1,5 @@
-package com.example.mymovies
+package com.example.mymovies.model
 
-import com.example.mymovies.MediaItem.*
 
 
 data class MediaItem(
@@ -16,7 +15,7 @@ fun getMedia()= (1..10).map {
         id = it,
         title = "Title $it",
         thumb = "https://placebeard.it/640x360/beard/$it",
-        type = if (it % 3 ==0) Type.VIDEO else Type.PHOTO
+        type = if (it % 3 ==0) MediaItem.Type.VIDEO else MediaItem.Type.PHOTO
 
     )
 }

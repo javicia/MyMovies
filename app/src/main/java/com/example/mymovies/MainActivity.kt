@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import coil.annotation.ExperimentalCoilApi
 import com.example.mymovies.ui.theme.MainScreen
 import com.example.mymovies.ui.theme.screen.detail.DetailScreen
@@ -26,10 +28,15 @@ import com.example.mymovies.ui.theme.screen.detail.DetailScreen
             val navController = rememberNavController()
             NavHost(navController = navController , startDestination = "main" ){
                composable("main"){
-                   MainScreen()
+                   MainScreen(navController)
                }
-                composable("detail"){
-                    DetailScreen()
+                composable(
+                    route = "detail/{mediaId}",
+                    arguments = listOf(navArgument("mediaId" ) {type = androidx.navigation.NavType.Companion.IntType})
+                ){backStackEntry ->
+                    val id = backStackEntry.arguments?.getInt("mediaId")
+                    requireNotNull(id,{"No puede ser nullo por que el detalle necesita un id"})
+                    DetailScreen(id)
                 }
             }
 

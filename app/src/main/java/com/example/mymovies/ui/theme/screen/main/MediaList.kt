@@ -1,99 +1,90 @@
 package com.example.mymovies
-
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.Icon
+import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayCircleOutline
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
 import com.example.mymovies.model.MediaItem
 import com.example.mymovies.model.getMedia
+import com.example.mymovies.ui.theme.MyMoviesApp
+import com.example.mymovies.ui.theme.screen.common.Thumb
 
+@ExperimentalFoundationApi
+@ExperimentalCoilApi
 @Composable
-fun MediaList(modifier: Modifier = Modifier) {
-
+fun MediaList(
+    modifier: Modifier = Modifier
+){
     LazyVerticalGrid(
-        contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_xsmall)),
         columns = GridCells.Adaptive(dimensionResource(id = R.dimen.column_min_wedith)),
-        modifier = Modifier
+        contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_xsmall)),
+        modifier = modifier
     ){
-        items(getMedia()){ item ->
-            MediaListItem(item, Modifier.padding(dimensionResource(id = R.dimen.padding_xsmall)))
+        items(getMedia()){
+            MediaListItem(
+                mediaItem = it,
+                onClick = { onClick(it) },
+                modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_xsmall)),
+
+            )
         }
     }
 }
 @ExperimentalCoilApi
-//@Preview(showBackground = true)
 @Composable
 fun MediaListItem(
-    item: MediaItem,
-    modifier: Modifier = Modifier
+    mediaItem: MediaItem,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
 ) {
-    Column(
-        modifier = Modifier
+    Card(
+        modifier = modifier.clickable { onClick() },
+        elevation = 0.dp,
+        //shape = RoundedCornerShape(8.dp)
+        border = BorderStroke(1.dp, Color.LightGray),
+        backgroundColor = MaterialTheme.colors.primary,
+        contentColor = MaterialTheme.colors.secondary
     ) {
-        this
-        Box(
-            modifier = Modifier
-                .height(dimensionResource(id = R.dimen.cell_thumb_height))
-                .fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-
-            Image(
-                painter = rememberAsyncImagePainter(
-                    ImageRequest.Builder(LocalContext.current)
-                        .data(data = item.thumb).apply(block = fun ImageRequest.Builder.() {
-                            crossfade(true)
-                            crossfade(5000)
-                        }).build()
-                ),
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop,
-            )
-            if (item.type == MediaItem.Type.VIDEO) {
-                Icon(
-                    imageVector = Icons.Default.PlayCircleOutline,
-                    contentDescription = null,
-                    modifier = Modifier.size(dimensionResource(id = R.dimen.cell_play_icon_size)),
-                    tint = Color.White
-                )
-                //Para cargar icono de Drawable Icon(painter = painterResource(id = R.drawable.ic_launcher_foreground))
-            }
+        Column{
+            Thumb(mediaItem)
+            Title(mediaItem)
         }
+    }
+
+}
+    @Composable
+    private fun Title(mediaItem: MediaItem) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colors.secondary)
+                //.background(MaterialTheme.colors.secondary)
                 .padding(dimensionResource(id = R.dimen.padding_medium))
         ) {
-            Text(text = item.title, style = MaterialTheme.typography.h6)
+            Text(
+                text = mediaItem.title,
+                style = MaterialTheme.typography.h6
+            )
         }
     }
-}
-@ExperimentalFoundationApi
-@Preview
-@Composable
-fun MediaListPreview(){
-    MediaList()
-}
 
+    @ExperimentalFoundationApi
+    @Composable
+    fun MediaListItemPreview() {
+        MyMoviesApp {
+            val mediaItem = MediaItem(1, "Item1", "", MediaItem.Type.VIDEO)
+            //MediaListItem(mediaItem = mediaItem, navController = navController)
+        }
+    }

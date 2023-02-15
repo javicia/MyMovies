@@ -1,24 +1,27 @@
 package com.example.mymovies.ui.theme.screen.detail
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import coil.annotation.ExperimentalCoilApi
+import com.example.mymovies.model.getMedia
+import com.example.mymovies.ui.theme.screen.common.Thumb
+
+
+@ExperimentalCoilApi
 @Composable
-@Preview (showBackground = true, widthDp = 400, heightDp = 400)
-fun DetailScreen(){
-Box(
-    modifier = Modifier.fillMaxSize(),
-    contentAlignment = Alignment.Center
-){
-    Text(
-        text = "Detail Screen",
-        style = MaterialTheme.typography.h4
-    )
-}
+fun DetailScreen(mediaId: Int){
+val mediaItem = remember {getMedia().first{it.id == mediaId}}
+    Scaffold(
+        topBar = { TopAppBar(title = { Text(text = mediaItem.title)})}
+            ) {padding ->
+
+            Thumb(mediaItem = mediaItem, Modifier.padding(padding))
+    }
+
 }
